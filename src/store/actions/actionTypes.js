@@ -1,0 +1,26 @@
+// User action types
+export const SET_USER_START = "SET_USER_START";
+export const SET_USER_FAIL = "SET_USER_FAIL";
+export const CLEAR_USER_ERROR = "CLEAR_USER_ERROR";
+
+export const AUTH_SUCCESS = "AUTH_SUCCESS";
+export const UPLOAD_IMAGE_SUCCESS = "UPLOAD_IMAGE_SUCCESS";
+export const EDIT_DETIAL_SUCCESS = "EDIT_DETIAL_SUCCESS";
+export const AUTH_LOGOUT = "AUTH_LOGOUT";
+export const MARK_NOTIFICATIONS_READ = "MARK_NOTIFICATIONS_READ";
+
+// Data action types
+export const SET_SCREAMS = "SET_SCREAMS";
+export const SET_DATA_START = "SET_DATA_START";
+export const SET_DATA_FAIL = "SET_DATA_FAIL";
+export const LIKE_SCREAM = "LIKE_SCREAM";
+export const UNLIKE_SCREAM = "UNLIKE_SCREAM";
+export const SET_CHANING_LIKE = "SET_CHANING_LIKE";
+export const UPDATE_LIKE_FAIL = "UPDATE_LIKE_FAIL";
+export const DELETE_SCREAM = "DELETE_SCREAM";
+export const SET_DELETING_SCREAM = "SET_DELETING_SCREAM";
+export const POST_SCREAM = "POST_SCREAM";
+export const SET_SCREAM = "SET_SCREAM";
+export const POST_COMMENT = "POST_COMMENT";
+export const SET_USER_DATA = "SET_USER_DATA";
+export const CLEAR_DATA_ERROR = "CLEAR_DATA_ERROR";
