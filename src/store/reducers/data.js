@@ -3,7 +3,6 @@ import * as actionTypes from "../actions/actionTypes";
 const initialState = {
   screams: [],
   hasNextPage: false,
-  currentPage: 1,
   scream: null,
   loading: {
     screams: false,
@@ -81,30 +80,25 @@ const reducer = (state = initialState, action) => {
         errors: [].concat(action.error, state.errors),
       };
     case actionTypes.SET_SCREAMS:
-      const numPerPage = 1;
-      const hasNextPage =
-        Math.ceil(action.totalScreamsCount / numPerPage) > action.currentPage;
       return {
         ...state,
         loading: {
           ...state.loading,
           screams: false,
         },
-        hasNextPage,
-        currentPage: action.currentPage,
-        screams:
-          action.currentPage !== 1
-            ? [
-                ...state.screams,
-                ...action.screamsData.map((screamData) => ({
-                  data: screamData,
-                  uiStatus: { changingLike: false, deleting: false },
-                })),
-              ]
-            : action.screamsData.map((screamData) => ({
+        hasNextPage: action.hasNextPage,
+        screams: action.recent
+          ? action.screamsData.map((screamData) => ({
+              data: screamData,
+              uiStatus: { changingLike: false, deleting: false },
+            }))
+          : [
+              ...state.screams,
+              ...action.screamsData.map((screamData) => ({
                 data: screamData,
                 uiStatus: { changingLike: false, deleting: false },
               })),
+            ],
       };
     case actionTypes.LIKE_SCREAM:
       return updateLikecount(state, action);

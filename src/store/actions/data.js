@@ -17,14 +17,18 @@ const setDataFail = (error, updateLoading) => {
   };
 };
 
-export const getScreams = (page) => async (dispatch) => {
+export const getScreams = (lastCreatedAt) => async (dispatch) => {
   const updateLoading = { screams: true };
-  page = page || 1;
   dispatch(setDataStart(updateLoading, "GET_SCREAMS"));
+
   try {
-    const url = `/screams?page=${page}&numPerPage=1`;
+    const url = lastCreatedAt
+      ? `/screams?lastCreatedAt=${lastCreatedAt}&numPerPage=10`
+      : `/screams?numPerPage=10`;
     const res = await axios.get(url);
-    dispatch(setScreams(res.data.screams, res.data.totalScreamsCount, page));
+    dispatch(
+      setScreams(res.data.screams, res.data.hasNextPage, !lastCreatedAt)
+    );
   } catch (error) {
     console.log(error);
     dispatch(
@@ -36,12 +40,12 @@ export const getScreams = (page) => async (dispatch) => {
   }
 };
 
-const setScreams = (screamsData, totalScreamsCount, currentPage) => {
+const setScreams = (screamsData, hasNextPage, recent) => {
   return {
     type: actionTypes.SET_SCREAMS,
     screamsData,
-    totalScreamsCount,
-    currentPage,
+    hasNextPage,
+    recent,
   };
 };
 

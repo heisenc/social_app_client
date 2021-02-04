@@ -16,8 +16,9 @@ function Home() {
   const screams = useSelector((state) => state.data.screams);
   const screamsData = screams.map((scream) => scream.data);
   const loading = useSelector((state) => state.data.loading.screams);
-  const currentPage = useSelector((state) => state.data.currentPage);
   const hasNextPage = useSelector((state) => state.data.hasNextPage);
+  const lastCreatedAt =
+    screamsData.length && screamsData[screamsData.length - 1].createdAt;
 
   const dispatch = useDispatch();
 
@@ -30,7 +31,7 @@ function Home() {
         (entries) => {
           console.log(entries);
           if (entries[0].isIntersecting && hasNextPage) {
-            dispatch(getScreams(currentPage + 1));
+            dispatch(getScreams(lastCreatedAt));
             console.log("Visible");
           }
         },
@@ -41,7 +42,7 @@ function Home() {
         observer.current.observe(node);
       }
     },
-    [dispatch, loading, hasNextPage, currentPage]
+    [dispatch, loading, hasNextPage, lastCreatedAt]
   );
 
   useEffect(() => {
@@ -57,17 +58,17 @@ function Home() {
     index === screamsData.length - 1 ? (
       <Scream
         scream={screamData}
-        key={screamData.screamId + index}
+        key={screamData.screamId}
         ref={lastScreamRef}
       />
     ) : (
-      <Scream scream={screamData} key={screamData.screamId + index} />
+      <Scream scream={screamData} key={screamData.screamId} />
     )
   );
 
   let recentScreamMarkup = !loading ? (
     screamsMarkup
-  ) : currentPage === 1 ? (
+  ) : screamsData.length === 0 ? (
     <ScreamSkeleton />
   ) : (
     <Fragment>
