@@ -5,9 +5,13 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import { makeStyles } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import MuiLink from "@material-ui/core/Link";
 import Card from "@material-ui/core/Card";
+import Avatar from "@material-ui/core/Avatar";
+import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import CardActions from "@material-ui/core/CardActions";
 import Typography from "@material-ui/core/Typography";
 import ChatIcon from "@material-ui/icons/Chat";
 
@@ -19,15 +23,18 @@ import LikeButton from "../LikeButton/LikeButton";
 const useStyles = makeStyles((theme) => ({
   card: {
     position: "relative",
-    display: "flex",
     marginBottom: 20,
   },
   image: {
     minWidth: 200,
   },
   content: {
-    padding: 25,
     objectFit: "cover",
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%", // 16:9
+    backgroundSize: "contain",
   },
 }));
 
@@ -45,6 +52,7 @@ function Scream(props, ref) {
       screamId,
       likeCount,
       commentCount,
+      image,
     },
   } = props;
 
@@ -53,25 +61,38 @@ function Scream(props, ref) {
   console.log(`rendering ${screamId}`);
   return (
     <Card className={classes.card} ref={ref ? ref : null}>
-      <CardMedia
-        image={userImage}
-        title="Profile image"
-        className={classes.image}
+      <CardHeader
+        avatar={
+          <MuiLink component={Link} color="primary" to={`/users/${userName}`}>
+            <Avatar alt={userName} src={userImage} />
+          </MuiLink>
+        }
+        title={
+          <MuiLink
+            component={Link}
+            color="primary"
+            variant="h5"
+            to={`/users/${userName}`}
+          >
+            @{userName}
+          </MuiLink>
+        }
+        subheader={dayjs(createdAt).fromNow()}
       />
+      {image && (
+        <CardMedia
+          className={classes.media}
+          image={image}
+          title="scream iamge"
+        />
+      )}
       <CardContent className={classes.content}>
-        <Typography
-          variant="h5"
-          component={Link}
-          to={`/users/${userName}`}
-          color="primary"
-        >
-          {userName}
-        </Typography>
         {deleteButton}
-        <Typography variant="body2" color="textSecondary">
-          {dayjs(createdAt).fromNow()}
-        </Typography>
         <Typography variant="body1">{body}</Typography>
+
+        <ScreamDetail screamId={screamId} openDialog={props.openDialog} />
+      </CardContent>
+      <CardActions disableSpacing>
         <LikeButton screamId={screamId} />
         <span>{likeCount} Likes</span>
         {matches && <br />}
@@ -79,8 +100,7 @@ function Scream(props, ref) {
           <ChatIcon color="primary" />
         </TooltipButton>
         <span>{commentCount} comments</span>
-        <ScreamDetail screamId={screamId} openDialog={props.openDialog} />
-      </CardContent>
+      </CardActions>
     </Card>
   );
 }

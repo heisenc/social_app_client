@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Grid from "@material-ui/core/Grid";
@@ -24,11 +24,23 @@ function User(props) {
 
   console.log("rending User");
 
+  // scroll to the matched scream
+  const notiScreamRef = useCallback(
+    (node) => {
+      console.log(node);
+      if (node) {
+        node.scrollIntoView();
+      }
+    },
+    [match]
+  );
+
   useEffect(() => {
     dispatch(getUserData(userName));
   }, [dispatch, userName]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     return () => {
       dispatch(clearDataError());
     };
@@ -48,7 +60,12 @@ function User(props) {
         return <Scream scream={screamData} key={screamData.screamId} />;
       }
       return (
-        <Scream scream={screamData} key={screamData.screamId} openDialog />
+        <Scream
+          scream={screamData}
+          key={screamData.screamId}
+          ref={notiScreamRef}
+          openDialog
+        />
       );
     })
   );

@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -23,6 +23,7 @@ import { initMarkNotificationsRead } from "../../store/actions/user";
 function Notifications(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
+  const history = useHistory();
   const notifications = useSelector((state) => state.user.notifications);
   dayjs.extend(relativeTime);
   let notificationIcon;
@@ -57,6 +58,11 @@ function Notifications(props) {
     }
   };
 
+  const onMenuItemClick = (path) => {
+    history.push(path);
+    handleClose();
+  };
+
   let notificationMarkup = notifications.length ? (
     notifications.map((noti) => {
       const verb =
@@ -73,14 +79,15 @@ function Notifications(props) {
         );
       const obj = noti.type === "LIKE_COMMENT" ? "comment" : "scream";
       return (
-        <MenuItem key={noti.notificationId} onClick={handleClose}>
+        <MenuItem
+          key={noti.notificationId}
+          onClick={onMenuItemClick.bind(
+            null,
+            `/users/${noti.recipient}/scream/${noti.screamId}`
+          )}
+        >
           {icon}
-          <Typography
-            component={Link}
-            color="default"
-            variant="body1"
-            to={`/users/${noti.recipient}/scream/${noti.screamId}`}
-          >
+          <Typography variant="body1">
             {noti.sender} {verb} your {obj} {time}
           </Typography>
         </MenuItem>

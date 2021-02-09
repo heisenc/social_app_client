@@ -149,13 +149,17 @@ const reducer = (state = initialState, action) => {
     case actionTypes.POST_SCREAM:
       return {
         ...state,
-        screams: [
-          {
-            data: action.newScreamData,
-            uiStatus: { changingLike: false, deleting: false },
-          },
-          ...state.screams,
-        ],
+        screams: state.screams.some(
+          (scream) => scream.data.userName === action.newScreamData.userName
+        )
+          ? [
+              {
+                data: action.newScreamData,
+                uiStatus: { changingLike: false, deleting: false },
+              },
+              ...state.screams,
+            ]
+          : state.screams,
         loading: {
           ...state.loading,
           postScream: false,

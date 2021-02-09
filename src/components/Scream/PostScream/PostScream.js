@@ -1,19 +1,22 @@
 import React, { Fragment, useCallback, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 //material UI stuff
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
-import Typography from "@material-ui/core/Typography";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
 
 //Icons
 import AddIcon from "@material-ui/icons/Add";
 import CloseIcon from "@material-ui/icons/Close";
+import ImageIcon from "@material-ui/icons/Image";
 
 import TooltipButton from "../../TooltipButton/TooltipButton";
 import {
@@ -29,6 +32,13 @@ const initialScreamData = {
       required: true,
     },
     valid: false,
+    touched: false,
+    errorMessage: null,
+  },
+  image: {
+    value: "",
+    validation: {},
+    valid: true,
     touched: false,
     errorMessage: null,
   },
@@ -50,13 +60,20 @@ const useStyles = makeStyles((theme) => {
       left: "91%",
       top: "6%",
     },
+    previewImage: {
+      width: "50%",
+      margin: "auto auto",
+      display: "block",
+    },
   };
 });
 
 function PostScream() {
+  const history = useHistory();
   const [screamData, setScreamData] = useState(initialScreamData);
   const [isOpen, setIsOpen] = useState(false);
   const [isScreamVaild, setIsScreamVaild] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
   const loading = useSelector((state) => state.data.loading.postScream);
   const error = useSelector((state) =>
     state.data.errors.find((err) => err.type === "POST_SCREAM")
@@ -67,6 +84,8 @@ function PostScream() {
   const openDialogHandler = useCallback(() => {
     if (!error) {
       setScreamData(initialScreamData);
+      setIsScreamVaild(false);
+      setImagePreview(null);
     }
     setIsOpen(true);
   }, [error]);
@@ -76,8 +95,16 @@ function PostScream() {
   }, []);
 
   const inputChangeHandler = useCallback((event) => {
+    let { name: fieldName, value, files } = event.target;
+    if (files && files[0]) {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(files[0]);
+      fileReader.onload = (e) => {
+        setImagePreview(e.target.result);
+      };
+    }
     setScreamData((prevForm) => {
-      const { name: fieldName, value } = event.target;
+      value = files && files[0] ? files[0] : value;
       const updatedForm = inputChangeUpdateForm(prevForm, fieldName, value);
       setIsScreamVaild(checkFormValidity(updatedForm));
       return updatedForm;
@@ -87,13 +114,15 @@ function PostScream() {
   const postScreamHandler = useCallback(
     (event) => {
       event.preventDefault();
-      const scream = {
-        body: screamData.body.value,
-      };
-      dispatch(initPostScream(scream));
+      const formData = new FormData();
+      formData.append("body", screamData.body.value);
+      formData.append("image", screamData.image.value);
+      dispatch(initPostScream(formData));
       closeDialogHandler();
+      history.push("/");
+      window.scroll(0, 0);
     },
-    [dispatch, screamData, closeDialogHandler]
+    [dispatch, screamData, closeDialogHandler, history]
   );
 
   return (
@@ -131,6 +160,30 @@ function PostScream() {
               onChange={inputChangeHandler}
               fullWidth
             />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="preview"
+                className={classes.previewImage}
+              />
+            )}
+            <br />
+            <input
+              name="image"
+              accept="image/*"
+              id="raised-button-file"
+              multiple
+              type="file"
+              onChange={inputChangeHandler}
+              hidden
+            />
+            <Tooltip title="upload image" placement="top">
+              <label htmlFor="raised-button-file">
+                <IconButton component="span" className="button">
+                  <ImageIcon />
+                </IconButton>
+              </label>
+            </Tooltip>
             {/* {error && (
               <Typography variant="body2" className={classes.customError}>
                 {error}
