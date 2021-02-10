@@ -31,6 +31,11 @@ const useStyles = makeStyles((theme) => {
       borderRadius: "50%",
       objectFit: "cover",
     },
+    screamImage: {
+      width: 200,
+      height: 200,
+      objectFit: "contain",
+    },
     dialogContent: {
       padding: 20,
     },
@@ -64,6 +69,7 @@ function ScreamDetail(props) {
     createdAt,
     userImage,
     userName,
+    image,
     likeCount,
     commentCount;
   if (scream) {
@@ -74,6 +80,7 @@ function ScreamDetail(props) {
     userName = scream.userName;
     likeCount = scream.likeCount;
     commentCount = scream.commentCount;
+    image = scream.image;
   }
 
   const dispatch = useDispatch();
@@ -137,6 +144,9 @@ function ScreamDetail(props) {
           <Typography variant="body2" color="textSecondary">
             {dayjs(createdAt).format("h:mm a, MMMM DD YYYY")}
           </Typography>
+          {image && (
+            <img alt="scream" src={image} className={classes.screamImage} />
+          )}
           <hr className={classes.invisibleSeparator} />
           <Typography variant="body1">{body}</Typography>
           <LikeButton screamId={screamId} />
