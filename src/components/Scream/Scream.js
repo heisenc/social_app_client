@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback } from "react";
+import { Link, useHistory } from "react-router-dom";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -17,7 +17,6 @@ import ChatIcon from "@material-ui/icons/Chat";
 
 import TooltipButton from "../TooltipButton/TooltipButton";
 import DeleteScream from "./DeleteScream/DeleteScream";
-import ScreamDetail from "./ScreamDetail/ScreamDetail";
 import LikeButton from "../LikeButton/LikeButton";
 
 const useStyles = makeStyles((theme) => ({
@@ -41,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 function Scream(props, ref) {
   dayjs.extend(relativeTime);
   const classes = useStyles();
+  const history = useHistory();
   const matches = useMediaQuery("(max-width:800px)");
 
   const {
@@ -54,16 +54,44 @@ function Scream(props, ref) {
       commentCount,
       image,
     },
+    deletable = true,
+    expandable = true,
+    children,
   } = props;
 
   const deleteButton = <DeleteScream screamId={screamId} userName={userName} />;
 
   console.log(`rendering ${screamId}`);
+
+  const onUserLinkClickHandler = (event) => {
+    event.stopPropagation();
+  };
+
+  const clickScreamHandler = useCallback(
+    (event) => {
+      console.log(event.target, event.currentTarget);
+      history.push(`/users/${userName}/scream/${screamId}`, {
+        fromScream: true,
+      });
+    },
+    [userName, history, screamId]
+  );
+
   return (
-    <Card className={classes.card} ref={ref ? ref : null}>
+    <Card
+      className={classes.card}
+      ref={ref ? ref : null}
+      onClick={expandable ? clickScreamHandler : null}
+      style={expandable ? { cursor: "pointer" } : null}
+    >
       <CardHeader
         avatar={
-          <MuiLink component={Link} color="primary" to={`/users/${userName}`}>
+          <MuiLink
+            component={Link}
+            color="primary"
+            to={`/users/${userName}`}
+            onClick={onUserLinkClickHandler}
+          >
             <Avatar alt={userName} src={userImage} />
           </MuiLink>
         }
@@ -73,6 +101,7 @@ function Scream(props, ref) {
             color="primary"
             variant="h5"
             to={`/users/${userName}`}
+            onClick={onUserLinkClickHandler}
           >
             @{userName}
           </MuiLink>
@@ -87,10 +116,8 @@ function Scream(props, ref) {
         />
       )}
       <CardContent className={classes.content}>
-        {deleteButton}
+        {deletable && deleteButton}
         <Typography variant="body1">{body}</Typography>
-
-        <ScreamDetail screamId={screamId} openDialog={props.openDialog} />
       </CardContent>
       <CardActions disableSpacing>
         <LikeButton screamId={screamId} />
@@ -101,6 +128,7 @@ function Scream(props, ref) {
         </TooltipButton>
         <span>{commentCount} comments</span>
       </CardActions>
+      {children}
     </Card>
   );
 }

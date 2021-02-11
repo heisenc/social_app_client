@@ -20,15 +20,29 @@ function LikeButton(props) {
   );
   const authenticated = useSelector((state) => state.user.authenticated);
   const dispatch = useDispatch();
-  const likeScream = useCallback(() => {
-    dispatch(initLikeScream(screamId));
-  }, [dispatch, screamId]);
+  const likeScream = useCallback(
+    (event) => {
+      event.stopPropagation();
+      dispatch(initLikeScream(screamId));
+    },
+    [dispatch, screamId]
+  );
 
-  const unlikeScream = useCallback(() => {
-    dispatch(initUnlikeScream(screamId));
-  }, [dispatch, screamId]);
+  const unlikeScream = useCallback(
+    (event) => {
+      event.stopPropagation();
+      dispatch(initUnlikeScream(screamId));
+    },
+    [dispatch, screamId]
+  );
+
   const likeButton = !authenticated ? (
-    <Link to="/login">
+    <Link
+      to="/login"
+      onClick={(event) => {
+        event.stopPropagation();
+      }}
+    >
       <TooltipButton title="Like">
         <FavoriteBorder color="primary" />
       </TooltipButton>

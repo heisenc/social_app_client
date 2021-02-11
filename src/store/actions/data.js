@@ -17,13 +17,15 @@ const setDataFail = (error, updateLoading) => {
   };
 };
 
-export const getScreams = (lastCreatedAt) => async (dispatch) => {
+export const getScreams = (lastCreatedAt, userName) => async (dispatch) => {
   const updateLoading = { screams: true };
   dispatch(setDataStart(updateLoading, "GET_SCREAMS"));
 
   try {
     const url = lastCreatedAt
-      ? `/screams?lastCreatedAt=${lastCreatedAt}&numPerPage=10`
+      ? userName
+        ? `/screams?lastCreatedAt=${lastCreatedAt}&userName=${userName}&numPerPage=10`
+        : `/screams?lastCreatedAt=${lastCreatedAt}&numPerPage=10`
       : `/screams?numPerPage=10`;
     const res = await axios.get(url);
     dispatch(

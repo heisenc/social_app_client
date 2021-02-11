@@ -8,6 +8,7 @@ import Home from "./containers/Home/Home";
 import Login from "./containers/Auth/Login/Login";
 import Signup from "./containers/Auth/Signup/Signup";
 import User from "./containers/User/User";
+import ScreamDetail from "./containers/ScreamDetail/ScreamDetail";
 import Navbar from "./components/Navbar/Navbar";
 import "./App.css";
 import themeConfig from "./util/theme";
@@ -61,7 +62,7 @@ function App() {
             <Route
               exact
               path={`/users/:userName/scream/:screamId`}
-              component={User}
+              component={ScreamDetail}
             />
             <Redirect to="/" />
           </Switch>

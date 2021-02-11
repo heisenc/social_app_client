@@ -35,16 +35,20 @@ function DeleteScream(props) {
   const [open, setOpen] = useState(false);
 
   const openDialogHandler = useCallback((event) => {
+    event.stopPropagation();
     setOpen(true);
   }, []);
-  const closeDialogHandler = useCallback((event) => {
+  const closeDialogHandler = useCallback((event, reson) => {
     setOpen(false);
   }, []);
 
-  const deleteScream = useCallback(() => {
-    dispatch(initDeleteScream(screamId));
-    setOpen(false);
-  }, [dispatch, screamId]);
+  const deleteScream = useCallback(
+    (event) => {
+      dispatch(initDeleteScream(screamId));
+      setOpen(false);
+    },
+    [dispatch, screamId]
+  );
 
   let deleteButton = null;
   if (authenticated && authUserName === userName) {
@@ -61,6 +65,9 @@ function DeleteScream(props) {
         <Dialog
           open={open}
           onClose={closeDialogHandler}
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
           fullWidth
           maxWidth="sm"
         >

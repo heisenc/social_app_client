@@ -57,6 +57,8 @@ const updateLikecount = (state, action) => {
   return updatedState;
 };
 
+const initialScreamUistatus = { changingLike: false, deleting: false };
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.SET_DATA_START:
@@ -90,13 +92,13 @@ const reducer = (state = initialState, action) => {
         screams: action.recent
           ? action.screamsData.map((screamData) => ({
               data: screamData,
-              uiStatus: { changingLike: false, deleting: false },
+              uiStatus: { ...initialScreamUistatus },
             }))
           : [
               ...state.screams,
               ...action.screamsData.map((screamData) => ({
                 data: screamData,
-                uiStatus: { changingLike: false, deleting: false },
+                uiStatus: { ...initialScreamUistatus },
               })),
             ],
       };
@@ -155,7 +157,7 @@ const reducer = (state = initialState, action) => {
           ? [
               {
                 data: action.newScreamData,
-                uiStatus: { changingLike: false, deleting: false },
+                uiStatus: { ...initialScreamUistatus },
               },
               ...state.screams,
             ]
@@ -172,6 +174,14 @@ const reducer = (state = initialState, action) => {
           ...state.loading,
           scream: false,
         },
+        screams: state.screams.length
+          ? replaceScream(action.screamData, state.screams)
+          : [
+              {
+                data: action.screamData,
+                uiStatus: { ...initialScreamUistatus },
+              },
+            ],
         scream: {
           ...action.screamData,
           comments: action.screamData.comments.map((commentData) => ({
@@ -209,7 +219,7 @@ const reducer = (state = initialState, action) => {
       };
 
     case actionTypes.SET_USER_DATA:
-      const { user, screams: screamsData } = action.userData;
+      const { user, screams: screamsData, hasNextPage } = action.userData;
       return {
         ...state,
         loading: {
@@ -220,6 +230,7 @@ const reducer = (state = initialState, action) => {
           data: screamData,
           uiStatus: { changingLike: false, deleting: false },
         })),
+        hasNextPage,
         userData: user,
       };
     case actionTypes.CLEAR_DATA_ERROR:
