@@ -16,9 +16,10 @@ function Home() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    console.log("home get screams");
     dispatch(getScreams());
     return () => {
-      dispatch(clearDataError());
+      dispatch(clearDataError(null, { screams: true }));
     };
   }, [dispatch]);
 

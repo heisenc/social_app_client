@@ -14,7 +14,16 @@ function TooltipButton(props) {
   } = props;
   return (
     <Tooltip title={title} className={tipClassName} placement="top">
-      <IconButton onClick={disabled ? null : onClick} className={btnClassName}>
+      <IconButton
+        onClick={
+          disabled
+            ? (event) => {
+                event.stopPropagation();
+              }
+            : onClick
+        }
+        className={btnClassName}
+      >
         {children}
       </IconButton>
     </Tooltip>

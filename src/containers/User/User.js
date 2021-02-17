@@ -27,7 +27,7 @@ function User(props) {
   useEffect(() => {
     window.scrollTo(0, 0);
     return () => {
-      dispatch(clearDataError());
+      dispatch(clearDataError(null, { screams: true }));
     };
   }, [dispatch]);
 

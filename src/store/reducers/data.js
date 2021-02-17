@@ -168,17 +168,21 @@ const reducer = (state = initialState, action) => {
         },
       };
     case actionTypes.SET_SCREAM:
+      const { comments, ...screamDaataWithoutComments } = action.screamData;
       return {
         ...state,
         loading: {
           ...state.loading,
           scream: false,
         },
-        screams: state.screams.length
-          ? replaceScream(action.screamData, state.screams)
+        screams: state.screams.some(
+          (scream) =>
+            scream.data.screamId === screamDaataWithoutComments.screamId
+        )
+          ? replaceScream(screamDaataWithoutComments, state.screams)
           : [
               {
-                data: action.screamData,
+                data: screamDaataWithoutComments,
                 uiStatus: { ...initialScreamUistatus },
               },
             ],
@@ -189,6 +193,11 @@ const reducer = (state = initialState, action) => {
             uiStatus: { changingLike: false },
           })),
         },
+      };
+    case actionTypes.CLEAR_SCREAM:
+      return {
+        ...state,
+        scream: null,
       };
     case actionTypes.POST_COMMENT:
       const addedCommentScreamData = state.screams.find(
@@ -234,18 +243,34 @@ const reducer = (state = initialState, action) => {
         userData: user,
       };
     case actionTypes.CLEAR_DATA_ERROR:
+      const newState = { ...state };
+
       if (!action.clearErrorType) {
-        return {
-          ...state,
-          errors: [],
-        };
-      }
-      return {
-        ...state,
-        errors: state.errors.filter(
+        newState.errors = [];
+      } else {
+        newState.errors = state.errors.filter(
           (err) => err.type !== action.clearErrorType
-        ),
-      };
+        );
+      }
+
+      if (!action.clearData) {
+        return newState;
+      }
+
+      if (action.clearData.scream) {
+        newState.scream = null;
+        newState.screams =
+          state.screams.length === 1 &&
+          state.screams[0].data.screamId === state.scream.screamId
+            ? []
+            : state.screams;
+      }
+
+      if (action.clearData.screams) {
+        newState.screams = [];
+      }
+
+      return newState;
     default:
       return state;
   }

@@ -252,9 +252,10 @@ const setUserData = (userData) => {
   };
 };
 
-export const clearDataError = (clearErrorType) => {
+export const clearDataError = (clearErrorType, clearData) => {
   return {
     type: actionTypes.CLEAR_DATA_ERROR,
     clearErrorType,
+    clearData,
   };
 };

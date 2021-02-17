@@ -59,7 +59,7 @@ function Notifications(props) {
   };
 
   const onMenuItemClick = (path) => {
-    history.push(path);
+    history.push(path, { fromNotifications: true });
     handleClose();
   };
 

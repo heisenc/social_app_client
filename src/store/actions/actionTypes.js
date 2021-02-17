@@ -24,3 +24,4 @@ export const SET_SCREAM = "SET_SCREAM";
 export const POST_COMMENT = "POST_COMMENT";
 export const SET_USER_DATA = "SET_USER_DATA";
 export const CLEAR_DATA_ERROR = "CLEAR_DATA_ERROR";
+export const CLEAR_SCREAM = "CLEAR_SCREAM";

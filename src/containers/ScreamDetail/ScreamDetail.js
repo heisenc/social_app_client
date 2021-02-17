@@ -48,13 +48,16 @@ function ScreamDetail(props) {
     window.scrollTo(0, 0);
     dispatch(getScream(screamIdParam));
     return () => {
-      dispatch(clearDataError());
+      dispatch(clearDataError(null, { scream: true }));
     };
   }, [dispatch, screamIdParam]);
 
   const onBackBtnClickHander = useCallback(
     (event) => {
-      if (location.state && location.state.fromScream) {
+      if (
+        location.state &&
+        (location.state.fromScream || location.state.fromNotifications)
+      ) {
         return history.goBack();
       }
       history.push(`/users/${userName}`);
